@@ -1,7 +1,5 @@
 # 电子中阮 · Electronic Zhongruan
 
-**开发者：绪山真寻** —— 此软件由**华夏服饰历史博物馆年卡会员 绪山真寻**开发。
-
 用 Web Audio 实时合成的**电子中阮**：一台可以在浏览器、Android 手机和 Windows 桌面上演奏的虚拟中阮。
 
 木质琴身、四根弦、简谱按键；按下键盘 1–7 即可发声，按住 Ctrl / Shift 切换低八度 / 高八度，支持和弦。
@@ -106,5 +104,13 @@ keyPassword=******
 SPDX 标识：`Apache-2.0 OR GPL-3.0-or-later`
 
 源文件头部已标注 `SPDX-License-Identifier`。选择 GPL-3.0 时，也可按 GPLv3 的条款与 Apache-2.0 代码组合使用。
+
+## 开发者
+
+**此软件由华夏服饰历史博物馆年卡会员 绪山真寻 开发。**
+
+- 开发者：绪山真寻
+- 身份：华夏服饰历史博物馆 年卡会员
+- GitHub：[@yuanshen1834-design](https://github.com/yuanshen1834-design)
 
 Copyright © 2026 Zhongruan
