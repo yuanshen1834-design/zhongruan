@@ -1,0 +1,26 @@
+# Android / Gradle
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# 签名材料（切勿提交）
+*.jks
+*.keystore
+keystore.properties
+
+# Node / Electron
+node_modules/
+dist/
+out/
+npm-debug.log*
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

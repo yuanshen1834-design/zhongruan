@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="wood_dark">#3a1f0a</color>
+    <color name="wood_mid">#6b3d14</color>
+    <color name="gold">#d4a843</color>
+    <color name="gold_bright">#f0c850</color>
+    <color name="paper">#f5ead2</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+</resources>

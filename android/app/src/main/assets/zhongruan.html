@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#3a1f0a">
+<title>电子中阮 · 键盘演奏</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --wood-dark: #3a1f0a;
+    --wood-mid: #6b3d14;
+    --wood-light: #a06a35;
+    --gold: #d4a843;
+    --gold-bright: #f0c850;
+    --paper: #f5ead2;
+    --red: #8b2020;
+    --text: #2a1a0a;
+  }
+
+  body {
+    font-family: "KaiTi", "STKaiti", "楷体", serif;
+    background: radial-gradient(ellipse at top, #2c1810 0%, #1a0e08 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px 15px;
+    color: var(--paper);
+  }
+
+  .container {
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 2.8em;
+    color: var(--gold-bright);
+    text-shadow: 0 0 20px rgba(212, 168, 67, 0.5), 2px 2px 4px rgba(0,0,0,0.8);
+    letter-spacing: 8px;
+    margin-bottom: 5px;
+  }
+
+  .subtitle {
+    font-size: 1em;
+    color: var(--gold);
+    letter-spacing: 3px;
+    margin-bottom: 25px;
+    opacity: 0.8;
+  }
+
+  /* ===== 中阮乐器视觉 ===== */
+  .zhongruan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px auto 30px;
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .neck {
+    width: 60px;
+    height: 180px;
+    background: linear-gradient(to right, #4a2a10, #6b3d14 40%, #7a4a1c 50%, #6b3d14 60%, #4a2a10);
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 2px 0 8px rgba(0,0,0,0.5);
+    border: 2px solid var(--wood-dark);
+    border-bottom: none;
+  }
+
+  .frets {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 18px,
+      var(--gold) 18px,
+      var(--gold) 19px
+    );
+    opacity: 0.7;
+  }
+
+  .fret-marker {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: var(--gold-bright);
+    border-radius: 50%;
+    box-shadow: 0 0 4px var(--gold);
+  }
+
+  .strings {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 12px;
+    z-index: 2;
+  }
+
+  .string {
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, #c0c0c0, #e8e8e8, #a0a0a0);
+    box-shadow: 0 0 2px rgba(255,255,255,0.5);
+  }
+
+  .body {
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #b87a3d 0%, #8a4f1c 40%, #5a3010 80%, #3a1f0a 100%);
+    box-shadow: 
+      inset 0 0 40px rgba(0,0,0,0.5),
+      inset 8px 8px 20px rgba(255,200,100,0.2),
+      0 10px 30px rgba(0,0,0,0.7),
+      0 0 60px rgba(212, 168, 67, 0.15);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .body::before {
+    content: '';
+    position: absolute;
+    inset: 15px;
+    border-radius: 50%;
+    border: 3px solid var(--wood-dark);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
+  }
+
+  .sound-hole {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #0a0503 0%, #1a0e08 60%, #3a1f0a 100%);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.5);
+    position: relative;
+    z-index: 1;
+  }
+
+  .sound-hole::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    border: 2px solid var(--wood-dark);
+  }
+
+  .bridge {
+    position: absolute;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 18px;
+    background: linear-gradient(to bottom, #4a2a10, #2a1505);
+    border-radius: 3px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    z-index: 2;
+  }
+
+  .body-strings {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 60px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .body-strings .string {
+    height: 100%;
+    width: 2px;
+    background: linear-gradient(to bottom, #c0c0c0, #e8e8e8, #a0a0a0);
+  }
+
+  /* 弦振动动画 */
+  @keyframes vibrate {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(2px); }
+    50% { transform: translateX(-2px); }
+    75% { transform: translateX(1px); }
+  }
+
+  .string.vibrating {
+    animation: vibrate 0.08s linear infinite;
+  }
+
+  /* ===== 简谱按键区 ===== */
+  .keys-wrapper {
+    margin: 30px 0 20px;
+  }
+
+  .keys-title {
+    font-size: 1.3em;
+    color: var(--gold);
+    margin-bottom: 15px;
+    letter-spacing: 4px;
+  }
+
+  .keys {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .key {
+    width: 75px;
+    height: 95px;
+    background: linear-gradient(to bottom, #7a4a1c, #5a3010);
+    border: 2px solid var(--wood-dark);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 1px 3px rgba(255,200,100,0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.08s ease;
+    position: relative;
+  }
+
+  .key .number {
+    font-size: 2.2em;
+    color: var(--gold-bright);
+    font-weight: bold;
+    line-height: 1;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+
+  .key .name {
+    font-size: 0.75em;
+    color: var(--paper);
+    margin-top: 4px;
+    opacity: 0.8;
+  }
+
+  .key.active {
+    background: linear-gradient(to bottom, var(--gold-bright), var(--gold));
+    transform: translateY(3px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 3px rgba(255,255,255,0.4), 0 0 20px rgba(240,200,80,0.6);
+  }
+
+  .key.active .number,
+  .key.active .name {
+    color: var(--wood-dark);
+    text-shadow: none;
+  }
+
+  /* 当前音符显示 */
+  .current-display {
+    margin: 25px auto;
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .current-note-box {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--wood-light);
+    border-radius: 8px;
+    padding: 10px 25px;
+    font-size: 1.4em;
+    color: var(--gold-bright);
+    letter-spacing: 3px;
+    min-width: 120px;
+  }
+
+  /* 说明 */
+  .instructions {
+    margin-top: 25px;
+    padding: 20px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--wood-mid);
+    border-radius: 8px;
+    text-align: left;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .instructions h3 {
+    color: var(--gold-bright);
+    margin-bottom: 10px;
+    letter-spacing: 3px;
+    text-align: center;
+  }
+
+  .instructions p {
+    color: var(--paper);
+    line-height: 1.8;
+    font-size: 0.95em;
+  }
+
+  kbd {
+    display: inline-block;
+    background: var(--wood-mid);
+    border: 1px solid var(--wood-light);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-size: 0.85em;
+    color: var(--gold-bright);
+    box-shadow: 0 2px 0 var(--wood-dark);
+  }
+
+  .start-hint {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    cursor: pointer;
+    transition: opacity 0.4s;
+  }
+
+  .start-hint.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .start-hint-box {
+    text-align: center;
+    padding: 40px;
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    background: rgba(40,20,10,0.9);
+  }
+
+  .start-hint-box h2 {
+    color: var(--gold-bright);
+    font-size: 2em;
+    margin-bottom: 15px;
+    letter-spacing: 5px;
+  }
+
+  .start-hint-box p {
+    color: var(--paper);
+    font-size: 1.1em;
+  }
+
+  .start-hint-box .pulse {
+    margin-top: 20px;
+    font-size: 1.5em;
+    color: var(--gold);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* ===== 工具面板 ===== */
+  .tools-panel {
+    margin-top: 30px;
+    padding: 25px;
+    background: rgba(40,20,10,0.5);
+    border: 1px solid var(--wood-mid);
+    border-radius: 12px;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
+
+  .tools-panel h3 {
+    color: var(--gold-bright);
+    margin-bottom: 15px;
+    letter-spacing: 3px;
+    text-align: center;
+    font-size: 1.3em;
+    border-bottom: 1px solid var(--wood-mid);
+    padding-bottom: 10px;
+  }
+
+  .tool-section {
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px dashed var(--wood-mid);
+  }
+
+  .tool-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .tool-section-title {
+    color: var(--gold);
+    font-size: 1.05em;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 8px 18px;
+    background: linear-gradient(to bottom, var(--wood-mid), var(--wood-dark));
+    border: 1px solid var(--wood-light);
+    border-radius: 6px;
+    color: var(--paper);
+    font-family: inherit;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 1px;
+    user-select: none;
+  }
+
+  .btn:hover {
+    background: linear-gradient(to bottom, var(--wood-light), var(--wood-mid));
+    box-shadow: 0 0 10px rgba(212, 168, 67, 0.3);
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn.active {
+    background: linear-gradient(to bottom, var(--gold-bright), var(--gold));
+    color: var(--wood-dark);
+    border-color: var(--gold-bright);
+    box-shadow: 0 0 15px rgba(240, 200, 80, 0.5);
+  }
+
+  .btn.danger {
+    background: linear-gradient(to bottom, #a04040, #6a2020);
+    border-color: #c05050;
+  }
+
+  .btn.danger:hover {
+    background: linear-gradient(to bottom, #b05050, #7a3030);
+  }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* 节拍器 */
+  .metronome-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .metronome-indicator {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--wood-dark);
+    border: 2px solid var(--wood-light);
+    transition: all 0.05s;
+    flex-shrink: 0;
+  }
+
+  .metronome-indicator.beat {
+    background: var(--red);
+    box-shadow: 0 0 15px var(--red);
+    transform: scale(1.2);
+  }
+
+  .metronome-indicator.accent {
+    background: var(--gold-bright);
+    box-shadow: 0 0 20px var(--gold-bright);
+    transform: scale(1.3);
+  }
+
+  .bpm-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .bpm-control input[type="range"] {
+    width: 120px;
+    accent-color: var(--gold);
+  }
+
+  .bpm-value {
+    color: var(--gold-bright);
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  /* 简谱输入 */
+  .jianpu-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--wood-light);
+    border-radius: 6px;
+    color: var(--paper);
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 1em;
+    margin-bottom: 10px;
+    resize: vertical;
+    min-height: 50px;
+  }
+
+  .jianpu-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 8px rgba(212, 168, 67, 0.3);
+  }
+
+  .jianpu-hint {
+    font-size: 0.8em;
+    color: var(--gold);
+    opacity: 0.7;
+    line-height: 1.6;
+  }
+
+  .jianpu-hint code {
+    background: rgba(0,0,0,0.3);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--gold-bright);
+  }
+
+  /* 录音状态 */
+  .record-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--paper);
+    font-size: 0.9em;
+    margin-left: 10px;
+  }
+
+  .record-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #555;
+  }
+
+  .record-dot.recording {
+    background: #e04040;
+    animation: blink 0.8s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .timer {
+    color: var(--gold-bright);
+    font-family: monospace;
+    font-size: 0.95em;
+  }
+
+  /* 进度条 */
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 3px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(to right, var(--gold), var(--gold-bright));
+    border-radius: 3px;
+    transition: width 0.1s linear;
+  }
+
+  /* ===== 移动端适配 ===== */
+  @media (max-width: 768px) {
+    body { padding: 15px 10px; }
+    h1 { font-size: 2em; letter-spacing: 4px; }
+    .subtitle { font-size: 0.85em; }
+    .zhongruan { max-width: 280px; }
+    .body { width: 260px; height: 260px; }
+    .neck { width: 50px; height: 140px; }
+    .keys { gap: 6px; }
+    .key {
+      width: 48px;
+      height: 65px;
+      border-radius: 6px;
+    }
+    .key .number { font-size: 1.6em; }
+    .key .name { font-size: 0.65em; }
+    .tools-panel { padding: 15px; }
+    .btn { padding: 8px 14px; font-size: 0.85em; }
+    .instructions { font-size: 0.9em; }
+    .instructions p { font-size: 0.9em; }
+    .current-note-box { font-size: 1.1em; padding: 8px 16px; }
+    .bpm-control input[type="range"] { width: 80px; }
+    .jianpu-input { font-size: 0.9em; }
+  }
+
+  @media (max-width: 380px) {
+    .key { width: 42px; height: 58px; }
+    .key .number { font-size: 1.4em; }
+  }
+
+  /* 防止触屏长按选中 */
+  .key {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+</style>
+</head>
+<body>
+
+<div class="start-hint" id="startHint">
+  <div class="start-hint-box">
+    <h2>电 子 中 阮</h2>
+    <p>点击屏幕任意位置开始演奏</p>
+    <div class="pulse">▶ 点此开启音色</div>
+  </div>
+</div>
+
+<div class="container">
+  <h1>电子中阮</h1>
+  <div class="subtitle">Z H O N G R U A N · 键 盘 演 奏</div>
+
+  <!-- 中阮视觉 -->
+  <div class="zhongruan">
+    <div class="neck">
+      <div class="frets"></div>
+      <div class="fret-marker" style="top: 30px;"></div>
+      <div class="fret-marker" style="top: 90px;"></div>
+      <div class="fret-marker" style="top: 150px;"></div>
+      <div class="strings">
+        <div class="string" data-string="0"></div>
+        <div class="string" data-string="1"></div>
+        <div class="string" data-string="2"></div>
+        <div class="string" data-string="3"></div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="body-strings">
+        <div class="string" data-string="0"></div>
+        <div class="string" data-string="1"></div>
+        <div class="string" data-string="2"></div>
+        <div class="string" data-string="3"></div>
+      </div>
+      <div class="sound-hole"></div>
+      <div class="bridge"></div>
+    </div>
+  </div>
+
+  <!-- 当前音符 -->
+  <div class="current-display">
+    <div class="current-note-box">
+      <span id="currentNote">—</span>
+      <span id="currentOctave"></span>
+    </div>
+  </div>
+
+  <!-- 简谱按键 -->
+  <div class="keys-wrapper">
+    <div class="keys-title">简 谱 按 键</div>
+    <div class="keys" id="keys">
+      <div class="key" data-note="1"><div class="number">1</div><div class="name">do</div></div>
+      <div class="key" data-note="2"><div class="number">2</div><div class="name">re</div></div>
+      <div class="key" data-note="3"><div class="number">3</div><div class="name">mi</div></div>
+      <div class="key" data-note="4"><div class="number">4</div><div class="name">fa</div></div>
+      <div class="key" data-note="5"><div class="number">5</div><div class="name">sol</div></div>
+      <div class="key" data-note="6"><div class="number">6</div><div class="name">la</div></div>
+      <div class="key" data-note="7"><div class="number">7</div><div class="name">ti</div></div>
+    </div>
+  </div>
+
+  <!-- 工具面板 -->
+  <div class="tools-panel">
+    <h3>演 奏 工 具</h3>
+
+    <!-- 节拍器 -->
+    <div class="tool-section">
+      <div class="tool-section-title">📏 节拍器</div>
+      <div class="metronome-row">
+        <button class="btn" id="metroBtn">▶ 开启</button>
+        <div class="metronome-indicator" id="metroIndicator"></div>
+        <div class="bpm-control">
+          <span style="color:var(--paper);">BPM</span>
+          <input type="range" id="bpmSlider" min="40" max="200" value="90">
+          <span class="bpm-value" id="bpmValue">90</span>
+        </div>
+        <div class="bpm-control">
+          <span style="color:var(--paper);">拍号</span>
+          <select id="timeSignature" class="btn" style="padding:6px 10px;">
+            <option value="2">2/4</option>
+            <option value="3">3/4</option>
+            <option value="4" selected>4/4</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 简谱自动播放 -->
+    <div class="tool-section">
+      <div class="tool-section-title">📝 简谱自动播放</div>
+      <textarea class="jianpu-input" id="jianpuInput" placeholder="输入简谱，例如：1 2 3 4 5 6 7 1"></textarea>
+      <div class="jianpu-hint">
+        格式说明：<code>1-7</code> 音符 | <code>1'</code> 高八度 | <code>1,</code> 低八度 | <code>-</code> 延长一拍 | <code>[135]</code> 和弦 | <code>0</code> 休止符 | 空格分隔
+      </div>
+      <div class="btn-row" style="margin-top:10px;">
+        <button class="btn" id="playJianpuBtn">▶ 自动演奏</button>
+        <button class="btn" id="stopJianpuBtn">■ 停止</button>
+        <select id="jianpuPreset" class="btn" style="padding:6px 10px;">
+          <option value="">— 选择预设曲目 —</option>
+          <option value="song1">小星星</option>
+          <option value="song2">欢乐颂</option>
+          <option value="song3">生日快乐</option>
+          <option value="song4">茉莉花</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 录音回放 -->
+    <div class="tool-section">
+      <div class="tool-section-title">🎤 录音回放</div>
+      <div class="btn-row">
+        <button class="btn danger" id="recordBtn">● 录音</button>
+        <button class="btn" id="playRecordBtn" disabled>▶ 回放</button>
+        <button class="btn" id="stopRecordBtn" disabled>■ 停止</button>
+        <button class="btn" id="clearRecordBtn" disabled>🗑 清除</button>
+        <span class="record-status">
+          <span class="record-dot" id="recordDot"></span>
+          <span class="timer" id="recordTimer">00:00</span>
+        </span>
+      </div>
+      <div class="progress-bar" id="recordProgressBar" style="display:none;">
+        <div class="progress-fill" id="recordProgressFill"></div>
+      </div>
+    </div>
+
+    <!-- 导出音频 -->
+    <div class="tool-section">
+      <div class="tool-section-title">💾 导出音频</div>
+      <div class="btn-row">
+        <button class="btn" id="exportBtn" disabled>⬇ 导出录音 (WebM)</button>
+        <span class="jianpu-hint" style="margin-left:5px;">录音后可导出为音频文件</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 说明 -->
+  <div class="instructions">
+    <h3>演 奏 说 明</h3>
+    <p>· 键盘数字键 <kbd>1</kbd> ~ <kbd>7</kbd> 对应简谱 do re mi fa sol la ti</p>
+    <p>· 按住 <kbd>Shift</kbd> + 数字键：升高一个八度</p>
+    <p>· 按住 <kbd>Ctrl</kbd> + 数字键：降低一个八度</p>
+    <p>· 同时按多个数字键可演奏<strong>和弦</strong>，也可用鼠标点击按键</p>
+    <p>· <strong>节拍器</strong>：点击开启，拖动 BPM 滑块调速度，可切换 2/4、3/4、4/4 拍号</p>
+    <p>· <strong>简谱自动播放</strong>：在输入框输入简谱后点击"自动演奏"。格式：<code>1-7</code> 音符、<code>1'</code> 高八度、<code>1,</code> 低八度、<code>-</code> 延长、<code>[135]</code> 和弦、<code>0</code> 休止</p>
+    <p>· <strong>录音回放</strong>：点击"录音"开始，演奏后再点击停止，即可回放或导出</p>
+    <p>· <strong>导出音频</strong>：录音后点击导出按钮，保存为 WebM 音频文件</p>
+    <p>· 中阮为四弦乐器，音色醇厚温暖，适合演奏旋律与和声</p>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== 简谱音符频率映射 (C大调) =====
+  // 1=do 2=re 3=mi 4=fa 5=sol 6=la 7=ti
+  const NOTE_FREQUENCIES = {
+    // 低八度 (Ctrl): C3-B3
+    low:  [130.81, 146.83, 164.81, 174.61, 196.00, 220.00, 246.94],
+    // 中八度: C4-B4
+    mid:  [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88],
+    // 高八度 (Shift): C5-B5
+    high: [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77]
+  };
+
+  const NOTE_NAMES = ['do', 're', 'mi', 'fa', 'sol', 'la', 'ti'];
+
+  let audioCtx = null;
+  let masterGain = null;
+  let reverbNode = null;
+  let reverbGain = null;
+  let wetGain = null;
+  let mediaStreamDest = null;
+  let buffers = { low: [], mid: [], high: [] };
+  let isReady = false;
+
+  // ===== 初始化音频引擎 =====
+  function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // 主增益
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.7;
+
+    // 混响（用卷积节点生成简单脉冲响应）
+    reverbNode = audioCtx.createConvolver();
+    reverbNode.buffer = createReverbImpulse(2.2, 2.5);
+    wetGain = audioCtx.createGain();
+    wetGain.gain.value = 0.25;
+    reverbGain = audioCtx.createGain();
+    reverbGain.gain.value = 0.3;
+
+    masterGain.connect(audioCtx.destination);
+    masterGain.connect(wetGain);
+    wetGain.connect(reverbNode);
+    reverbNode.connect(reverbGain);
+    reverbGain.connect(audioCtx.destination);
+
+    // 录音导出用：将主增益也连接到 MediaStreamDestination
+    try {
+      mediaStreamDest = audioCtx.createMediaStreamDestination();
+      masterGain.connect(mediaStreamDest);
+    } catch (e) {
+      console.warn('MediaStreamDestination not supported', e);
+    }
+
+    // 预生成所有音符的拨弦 buffer
+    generateAllBuffers();
+    isReady = true;
+  }
+
+  // ===== 生成混响脉冲响应 =====
+  function createReverbImpulse(duration, decay) {
+    const rate = audioCtx.sampleRate;
+    const length = rate * duration;
+    const impulse = audioCtx.createBuffer(2, length, rate);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = impulse.getChannelData(ch);
+      for (let i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay);
+      }
+    }
+    return impulse;
+  }
+
+  // ===== Karplus-Strong 拨弦合成 =====
+  function createPluckBuffer(frequency, duration, pluckPosition) {
+    const sampleRate = audioCtx.sampleRate;
+    const length = Math.floor(sampleRate * duration);
+    const buffer = audioCtx.createBuffer(1, length, sampleRate);
+    const data = buffer.getChannelData(0);
+
+    // 延迟线长度 = 采样率 / 频率
+    const delayLength = Math.max(2, Math.floor(sampleRate / frequency));
+    const delayLine = new Float32Array(delayLength);
+
+    // 用衰减的噪声初始化延迟线（模拟拨弦激发）
+    // pluckPosition 0~1：拨弦位置影响谐波分布（越靠近琴桥泛音越多）
+    const decay = 0.002 + pluckPosition * 0.008;
+    for (let i = 0; i < delayLength; i++) {
+      delayLine[i] = (Math.random() * 2 - 1) * Math.exp(-i * decay);
+    }
+
+    let idx = 0;
+    // 阻尼系数：中阮共鸣较长，damping 接近 1
+    const damping = 0.996;
+
+    for (let i = 0; i < length; i++) {
+      const current = delayLine[idx];
+      data[i] = current;
+
+      // Karplus-Strong 更新：相邻两点平均 * 阻尼
+      const nextIdx = (idx + 1) % delayLength;
+      delayLine[idx] = (delayLine[idx] + delayLine[nextIdx]) * 0.5 * damping;
+      idx = nextIdx;
+    }
+
+    // 应用低通滤波让音色更温暖（模拟共鸣）
+    let max = 0;
+    for (let i = 0; i < length; i++) {
+      const a = data[i];
+      // 简单的单极点低通
+      const filtered = (a + (i > 0 ? data[i - 1] : a)) * 0.5;
+      data[i] = filtered;
+      const abs = Math.abs(filtered);
+      if (abs > max) max = abs;
+    }
+
+    // 归一化
+    if (max > 0) {
+      for (let i = 0; i < length; i++) {
+        data[i] = data[i] / max * 0.8;
+      }
+    }
+
+    return buffer;
+  }
+
+  // ===== 预生成所有 buffer =====
+  function generateAllBuffers() {
+    const positions = [0.2, 0.35, 0.5, 0.65, 0.8, 0.9, 0.95];
+    ['low', 'mid', 'high'].forEach(octave => {
+      NOTE_FREQUENCIES[octave].forEach((freq, i) => {
+        buffers[octave][i] = createPluckBuffer(freq, 3.5, positions[i]);
+      });
+    });
+  }
+
+  // ===== 播放音符 =====
+  function playNote(noteIndex, octave) {
+    if (!isReady) return;
+    const freq = NOTE_FREQUENCIES[octave][noteIndex];
+    const buffer = buffers[octave][noteIndex];
+    if (!buffer) return;
+
+    const now = audioCtx.currentTime;
+
+    // 创建声源
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+
+    // 增益 + ADSR 包络
+    const gain = audioCtx.createGain();
+    const attack = 0.008;
+    const decay = 0.15;
+    const sustainLevel = 0.35;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.9, now + attack);
+    gain.gain.exponentialRampToValueAtTime(sustainLevel, now + attack + decay);
+    // 自然衰减（buffer 本身有衰减，这里再加一层）
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 3.0);
+
+    // 低通滤波器增加温暖感
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = Math.min(freq * 8, 6000);
+    filter.Q.value = 0.7;
+
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(masterGain);
+
+    source.start(now);
+    source.onended = () => {
+      source.disconnect();
+      gain.disconnect();
+      filter.disconnect();
+    };
+  }
+
+  // ===== 视觉反馈 =====
+  const keysEl = document.getElementById('keys');
+  const currentNoteEl = document.getElementById('currentNote');
+  const currentOctaveEl = document.getElementById('currentOctave');
+  const stringEls = document.querySelectorAll('.string');
+  let vibratingTimers = [];
+
+  function activateKey(noteIndex, octave) {
+    const key = keysEl.querySelector(`.key[data-note="${noteIndex + 1}"]`);
+    if (key) key.classList.add('active');
+
+    const octaveLabel = octave === 'low' ? '（低八度）' : octave === 'high' ? '（高八度）' : '';
+    currentNoteEl.textContent = `${noteIndex + 1} ${NOTE_NAMES[noteIndex]}`;
+    currentOctaveEl.textContent = octaveLabel;
+
+    // 弦振动动画 - 4根弦根据音高轮流振动
+    const stringIdx = noteIndex % 4;
+    stringEls.forEach((s, i) => {
+      if (i === stringIdx || (noteIndex % 2 === 0 && i === (stringIdx + 1) % 4)) {
+        s.classList.add('vibrating');
+        clearTimeout(vibratingTimers[i]);
+        vibratingTimers[i] = setTimeout(() => {
+          s.classList.remove('vibrating');
+        }, 400);
+      }
+    });
+  }
+
+  function deactivateKey(noteIndex) {
+    const key = keysEl.querySelector(`.key[data-note="${noteIndex + 1}"]`);
+    if (key) key.classList.remove('active');
+  }
+
+  // ===== 键盘事件 =====
+  const keyMap = {
+    'Digit1': 0, 'Digit2': 1, 'Digit3': 2, 'Digit4': 3,
+    'Digit5': 4, 'Digit6': 5, 'Digit7': 6,
+    'Numpad1': 0, 'Numpad2': 1, 'Numpad3': 2, 'Numpad4': 3,
+    'Numpad5': 4, 'Numpad6': 5, 'Numpad7': 6
+  };
+
+  const pressedKeys = new Set();
+
+  document.addEventListener('keydown', (e) => {
+    if (!isReady) return;
+    if (e.repeat) return;
+
+    const noteIndex = keyMap[e.code];
+    if (noteIndex === undefined) return;
+    if (pressedKeys.has(e.code)) return;
+
+    pressedKeys.add(e.code);
+
+    let octave = 'mid';
+    if (e.shiftKey) octave = 'high';
+    else if (e.ctrlKey || e.metaKey) octave = 'low';
+
+    playNote(noteIndex, octave);
+    recordNote(noteIndex, octave);
+    activateKey(noteIndex, octave);
+    e.preventDefault();
+  });
+
+  document.addEventListener('keyup', (e) => {
+    const noteIndex = keyMap[e.code];
+    if (noteIndex === undefined) return;
+    pressedKeys.delete(e.code);
+    deactivateKey(noteIndex);
+  });
+
+  // ===== 鼠标点击按键 =====
+  keysEl.querySelectorAll('.key').forEach(key => {
+    const noteIndex = parseInt(key.dataset.note) - 1;
+    key.addEventListener('mousedown', (e) => {
+      if (!isReady) return;
+      let octave = 'mid';
+      if (e.shiftKey) octave = 'high';
+      else if (e.ctrlKey || e.metaKey) octave = 'low';
+      playNote(noteIndex, octave);
+      recordNote(noteIndex, octave);
+      activateKey(noteIndex, octave);
+    });
+    key.addEventListener('mouseup', () => deactivateKey(noteIndex));
+    key.addEventListener('mouseleave', () => deactivateKey(noteIndex));
+  });
+
+  // ===== 触屏支持 =====
+  keysEl.querySelectorAll('.key').forEach(key => {
+    const noteIndex = parseInt(key.dataset.note) - 1;
+    key.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (!isReady) return;
+      playNote(noteIndex, 'mid');
+      recordNote(noteIndex, 'mid');
+      activateKey(noteIndex, 'mid');
+    });
+    key.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      deactivateKey(noteIndex);
+    });
+  });
+
+  // ============================================
+  // =====  工 具 功 能 模 块  ===================
+  // ============================================
+
+  // ===== 共享 BPM / 速度 =====
+  let currentBPM = 90;
+  let currentTimeSig = 4;
+
+  // ===== 1. 节拍器 =====
+  const metroState = {
+    playing: false,
+    nextNoteTime: 0,
+    currentBeat: 0,
+    lookahead: 25,       // ms
+    scheduleAheadTime: 0.1 // s
+  };
+  let metroTimer = null;
+
+  function playClick(time, isAccent) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = isAccent ? 1200 : 800;
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(isAccent ? 0.3 : 0.15, time + 0.001);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(time);
+    osc.stop(time + 0.05);
+
+    // 视觉反馈（setTimeout 近似同步）
+    const delay = (time - audioCtx.currentTime) * 1000;
+    setTimeout(() => {
+      const ind = document.getElementById('metroIndicator');
+      if (!ind) return;
+      ind.classList.remove('beat', 'accent');
+      ind.classList.add(isAccent ? 'accent' : 'beat');
+      setTimeout(() => ind.classList.remove('beat', 'accent'), 100);
+    }, Math.max(0, delay));
+  }
+
+  function metroScheduler() {
+    if (!metroState.playing || !audioCtx) return;
+    while (metroState.nextNoteTime < audioCtx.currentTime + metroState.scheduleAheadTime) {
+      const isAccent = (metroState.currentBeat % currentTimeSig === 0);
+      playClick(metroState.nextNoteTime, isAccent);
+      const secondsPerBeat = 60.0 / currentBPM;
+      metroState.nextNoteTime += secondsPerBeat;
+      metroState.currentBeat++;
+    }
+  }
+
+  function startMetronome() {
+    if (!isReady) return;
+    metroState.playing = true;
+    metroState.currentBeat = 0;
+    metroState.nextNoteTime = audioCtx.currentTime + 0.05;
+    metroTimer = setInterval(metroScheduler, metroState.lookahead);
+    document.getElementById('metroBtn').textContent = '⏸ 暂停';
+    document.getElementById('metroBtn').classList.add('active');
+  }
+
+  function stopMetronome() {
+    metroState.playing = false;
+    if (metroTimer) { clearInterval(metroTimer); metroTimer = null; }
+    document.getElementById('metroBtn').textContent = '▶ 开启';
+    document.getElementById('metroBtn').classList.remove('active');
+    const ind = document.getElementById('metroIndicator');
+    if (ind) ind.classList.remove('beat', 'accent');
+  }
+
+  // 绑定节拍器控件
+  document.getElementById('metroBtn').addEventListener('click', () => {
+    if (metroState.playing) stopMetronome(); else startMetronome();
+  });
+  document.getElementById('bpmSlider').addEventListener('input', (e) => {
+    currentBPM = parseInt(e.target.value);
+    document.getElementById('bpmValue').textContent = currentBPM;
+  });
+  document.getElementById('timeSignature').addEventListener('change', (e) => {
+    currentTimeSig = parseInt(e.target.value);
+  });
+
+  // ===== 2. 简谱解析与自动播放 =====
+  // 简谱格式：
+  //   1-7 音符 | 1' 高八度 | 1, 低八度 | - 延长一拍 | [135] 和弦 | 0 休止符
+  function parseJianpu(text) {
+    const tokens = [];
+    // 先处理和弦 [xxx]
+    let i = 0;
+    const str = text.replace(/\s+/g, ' ').trim();
+    while (i < str.length) {
+      const ch = str[i];
+      if (ch === ' ') { i++; continue; }
+      if (ch === '[') {
+        // 和弦：读取到 ]
+        const end = str.indexOf(']', i);
+        if (end === -1) { i++; continue; }
+        const chordStr = str.substring(i + 1, end);
+        const notes = [];
+        for (let j = 0; j < chordStr.length; j++) {
+          const c = chordStr[j];
+          if (c >= '1' && c <= '7') {
+            let oct = 'mid';
+            if (chordStr[j + 1] === "'") { oct = 'high'; j++; }
+            else if (chordStr[j + 1] === ',') { oct = 'low'; j++; }
+            notes.push({ noteIndex: parseInt(c) - 1, octave: oct });
+          }
+        }
+        if (notes.length) tokens.push({ type: 'chord', notes: notes, duration: 1 });
+        i = end + 1;
+      } else if (ch >= '1' && ch <= '7') {
+        let oct = 'mid';
+        if (str[i + 1] === "'") { oct = 'high'; i++; }
+        else if (str[i + 1] === ',') { oct = 'low'; i++; }
+        tokens.push({ type: 'note', noteIndex: parseInt(ch) - 1, octave: oct, duration: 1 });
+        i++;
+      } else if (ch === '0') {
+        tokens.push({ type: 'rest', duration: 1 });
+        i++;
+      } else if (ch === '-') {
+        // 延长上一个音符/和弦的时值
+        const last = tokens[tokens.length - 1];
+        if (last) last.duration += 1;
+        i++;
+      } else {
+        i++;
+      }
+    }
+    return tokens;
+  }
+
+  let jianpuPlaying = false;
+  let jianpuTimer = null;
+  let jianpuStartTime = 0;
+  let jianpuTotalTime = 0;
+
+  function playJianpu(text) {
+    if (!isReady || jianpuPlaying) return;
+    const tokens = parseJianpu(text);
+    if (!tokens.length) { alert('简谱为空或格式不正确'); return; }
+
+    jianpuPlaying = true;
+    document.getElementById('playJianpuBtn').classList.add('active');
+
+    const beatDur = 60.0 / currentBPM;
+    let scheduleTime = audioCtx.currentTime + 0.1;
+    jianpuStartTime = scheduleTime;
+
+    tokens.forEach(token => {
+      const dur = token.duration * beatDur;
+      if (token.type === 'note') {
+        playNoteAt(token.noteIndex, token.octave, scheduleTime);
+        scheduleVisualAt(token.noteIndex, token.octave, scheduleTime);
+      } else if (token.type === 'chord') {
+        token.notes.forEach(n => {
+          playNoteAt(n.noteIndex, n.octave, scheduleTime);
+          scheduleVisualAt(n.noteIndex, n.octave, scheduleTime);
+        });
+      }
+      scheduleTime += dur;
+    });
+
+    jianpuTotalTime = scheduleTime - jianpuStartTime;
+    jianpuTimer = setTimeout(() => stopJianpu(), jianpuTotalTime * 1000 + 200);
+  }
+
+  // 支持在指定时间播放音符（用于自动播放和导出）
+  function playNoteAt(noteIndex, octave, when) {
+    if (!isReady) return;
+    const buffer = buffers[octave][noteIndex];
+    if (!buffer) return;
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+
+    const gain = audioCtx.createGain();
+    const attack = 0.008;
+    gain.gain.setValueAtTime(0, when);
+    gain.gain.linearRampToValueAtTime(0.9, when + attack);
+    gain.gain.exponentialRampToValueAtTime(0.35, when + attack + 0.15);
+    gain.gain.exponentialRampToValueAtTime(0.001, when + 3.0);
+
+    const freq = NOTE_FREQUENCIES[octave][noteIndex];
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = Math.min(freq * 8, 6000);
+    filter.Q.value = 0.7;
+
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(masterGain);
+
+    source.start(when);
+    source.onended = () => {
+      source.disconnect(); gain.disconnect(); filter.disconnect();
+    };
+  }
+
+  function scheduleVisualAt(noteIndex, octave, when) {
+    const delay = (when - audioCtx.currentTime) * 1000;
+    setTimeout(() => {
+      activateKey(noteIndex, octave);
+      // 自动取消高亮，避免按键一直亮着
+      setTimeout(() => deactivateKey(noteIndex), 400);
+    }, Math.max(0, delay));
+  }
+
+  function stopJianpu() {
+    jianpuPlaying = false;
+    if (jianpuTimer) { clearTimeout(jianpuTimer); jianpuTimer = null; }
+    document.getElementById('playJianpuBtn').classList.remove('active');
+  }
+
+  // 预设曲目（使用反引号以兼容高八度标记 '）
+  const PRESETS = {
+    song1: `1 1 5 5 6 6 5- 4 4 3 3 2 2 1- 5 5 4 4 3 3 2- 5 5 4 4 3 3 2- 1 1 5 5 6 6 5- 4 4 3 3 2 2 1-`,
+    song2: `3 3 4 5 5 4 3 2 1 1 2 3 3- 2 2- 3 3 4 5 5 4 3 2 1 1 2 3 2 1 1-`,
+    song3: `5 5 6 5 1' 7- 5 5 6 5 2' 1'- 5 5 5' 3' 1' 7 6- 4' 4' 3' 1' 2' 1'-`,
+    song4: `3 3 5 6 1' 6 5 5 3 5 6- 5 3 2 3 5 6 5- 3 5 6 1' 6 5 3 2 1- 3 5 3 2 1- 6 1' 6 5 3 5 6-`
+  };
+
+  document.getElementById('playJianpuBtn').addEventListener('click', () => {
+    const text = document.getElementById('jianpuInput').value;
+    if (jianpuPlaying) stopJianpu(); else playJianpu(text);
+  });
+  document.getElementById('stopJianpuBtn').addEventListener('click', stopJianpu);
+  document.getElementById('jianpuPreset').addEventListener('change', (e) => {
+    if (e.target.value && PRESETS[e.target.value]) {
+      document.getElementById('jianpuInput').value = PRESETS[e.target.value];
+    }
+  });
+
+  // ===== 3. 录音回放 =====
+  // 录音数据：noteEvents = [{noteIndex, octave, time}] 相对秒数
+  let recording = false;
+  let recordStartTime = 0;
+  let recordEvents = [];
+  let recordTimerInterval = null;
+  let recordedBlob = null;
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let playbackTimer = null;
+  let playbackStartTime = 0;
+  let playbackTotal = 0;
+
+  function startRecording() {
+    if (!isReady) return;
+    recordEvents = [];
+    recording = true;
+    recordStartTime = audioCtx.currentTime;
+    document.getElementById('recordDot').classList.add('recording');
+    document.getElementById('recordBtn').textContent = '■ 停止录音';
+    document.getElementById('recordBtn').classList.add('active');
+    document.getElementById('playRecordBtn').disabled = true;
+    document.getElementById('clearRecordBtn').disabled = true;
+    document.getElementById('exportBtn').disabled = true;
+
+    // 计时器显示
+    recordTimerInterval = setInterval(() => {
+      const elapsed = audioCtx.currentTime - recordStartTime;
+      updateRecordTimer(elapsed);
+    }, 100);
+
+    // MediaRecorder 捕获音频流
+    recordedChunks = [];
+    if (mediaStreamDest && window.MediaRecorder) {
+      try {
+        mediaRecorder = new MediaRecorder(mediaStreamDest.stream);
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) recordedChunks.push(e.data);
+        };
+        mediaRecorder.onstop = () => {
+          recordedBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+        };
+        mediaRecorder.start();
+      } catch (e) {
+        console.warn('MediaRecorder start failed', e);
+        mediaRecorder = null;
+      }
+    }
+  }
+
+  function stopRecording() {
+    recording = false;
+    if (recordTimerInterval) { clearInterval(recordTimerInterval); recordTimerInterval = null; }
+    document.getElementById('recordDot').classList.remove('recording');
+    document.getElementById('recordBtn').textContent = '● 录音';
+    document.getElementById('recordBtn').classList.remove('active');
+    document.getElementById('playRecordBtn').disabled = recordEvents.length === 0;
+    document.getElementById('clearRecordBtn').disabled = recordEvents.length === 0;
+    document.getElementById('exportBtn').disabled = !recordedBlob;
+
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+    const total = recordEvents.length ? recordEvents[recordEvents.length - 1].time + 3 : 0;
+    updateRecordTimer(recordEvents.length ? recordEvents[recordEvents.length - 1].time : 0);
+  }
+
+  function recordNote(noteIndex, octave) {
+    if (!recording) return;
+    const t = audioCtx.currentTime - recordStartTime;
+    recordEvents.push({ noteIndex, octave, time: t });
+  }
+
+  function updateRecordTimer(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    document.getElementById('recordTimer').textContent =
+      `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
+  function playRecorded() {
+    if (!recordEvents.length || !isReady) return;
+    document.getElementById('playRecordBtn').disabled = true;
+    document.getElementById('stopRecordBtn').disabled = false;
+    document.getElementById('recordProgressBar').style.display = 'block';
+
+    playbackStartTime = audioCtx.currentTime;
+    playbackTotal = recordEvents[recordEvents.length - 1].time + 3;
+
+    recordEvents.forEach(ev => {
+      playNoteAt(ev.noteIndex, ev.octave, playbackStartTime + ev.time);
+      scheduleVisualAt(ev.noteIndex, ev.octave, playbackStartTime + ev.time);
+    });
+
+    // 进度条
+    const progressFill = document.getElementById('recordProgressFill');
+    const progressInterval = setInterval(() => {
+      const elapsed = audioCtx.currentTime - playbackStartTime;
+      const pct = Math.min(100, (elapsed / playbackTotal) * 100);
+      progressFill.style.width = pct + '%';
+      if (elapsed >= playbackTotal) {
+        clearInterval(progressInterval);
+        stopPlayback();
+      }
+    }, 100);
+    playbackTimer = progressInterval;
+  }
+
+  function stopPlayback() {
+    if (playbackTimer) { clearInterval(playbackTimer); playbackTimer = null; }
+    document.getElementById('playRecordBtn').disabled = false;
+    document.getElementById('stopRecordBtn').disabled = true;
+    document.getElementById('recordProgressFill').style.width = '0%';
+    document.getElementById('recordProgressBar').style.display = 'none';
+  }
+
+  function clearRecording() {
+    recordEvents = [];
+    recordedBlob = null;
+    document.getElementById('playRecordBtn').disabled = true;
+    document.getElementById('clearRecordBtn').disabled = true;
+    document.getElementById('exportBtn').disabled = true;
+    document.getElementById('recordTimer').textContent = '00:00';
+  }
+
+  document.getElementById('recordBtn').addEventListener('click', () => {
+    if (recording) stopRecording(); else startRecording();
+  });
+  document.getElementById('playRecordBtn').addEventListener('click', playRecorded);
+  document.getElementById('stopRecordBtn').addEventListener('click', stopPlayback);
+  document.getElementById('clearRecordBtn').addEventListener('click', clearRecording);
+
+  // ===== 4. 导出音频 =====
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    if (!recordedBlob) return;
+    const url = URL.createObjectURL(recordedBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `zhongruan_recording_${Date.now()}.webm`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  // ===== 启动 =====
+  const startHint = document.getElementById('startHint');
+  function start() {
+    initAudio();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    startHint.classList.add('hidden');
+  }
+  startHint.addEventListener('click', start);
+  document.addEventListener('keydown', (e) => {
+    if (!isReady && (e.code === 'Enter' || e.code === 'Space')) start();
+  });
+
+})();
+</script>
+
+</body>
+</html>
