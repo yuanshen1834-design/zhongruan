@@ -1,3 +1,7 @@
+// 电子中阮 (Electronic Zhongruan) — Electron 桌面端入口
+// Copyright (c) 2026 Zhongruan
+// SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-or-later
+
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 

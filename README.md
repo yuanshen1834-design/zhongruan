@@ -83,6 +83,17 @@ keyPassword=******
 - Android：`WebView` 加载 `assets` 本地页面，运行时申请录音权限
 - Windows：Electron 33（`contextIsolation` 开启、`nodeIntegration` 关闭）
 
-## License
+## 授权 / License
 
-[MIT](LICENSE)
+本项目采用**双许可**：你可以任选下列许可之一来使用、修改和分发本项目。
+
+| 许可 | 全文 | 特点 |
+| --- | --- | --- |
+| Apache License 2.0 | [LICENSE-APACHE-2.0](LICENSE-APACHE-2.0) | 宽松许可，含明确的专利授权，商业使用友好 |
+| GNU GPL v3.0 或更高版本 | [LICENSE-GPL-3.0](LICENSE-GPL-3.0) | 强 copyleft，衍生作品需以同样许可开源 |
+
+SPDX 标识：`Apache-2.0 OR GPL-3.0-or-later`
+
+源文件头部已标注 `SPDX-License-Identifier`。选择 GPL-3.0 时，也可按 GPLv3 的条款与 Apache-2.0 代码组合使用。
+
+Copyright © 2026 Zhongruan

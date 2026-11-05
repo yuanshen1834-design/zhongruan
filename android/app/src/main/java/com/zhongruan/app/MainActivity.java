@@ -1,3 +1,9 @@
+/*
+ * 电子中阮 (Electronic Zhongruan) — Android WebView 壳
+ * Copyright (c) 2026 Zhongruan
+ * SPDX-License-Identifier: Apache-2.0 OR GPL-3.0-or-later
+ */
+
 package com.zhongruan.app;
 
 import android.Manifest;
