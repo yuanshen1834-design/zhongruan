@@ -8,6 +8,15 @@
 
 ---
 
+## 下载
+
+| 平台 | 文件 | 说明 |
+| --- | --- | --- |
+| Android | [电子中阮-release.apk](apk/电子中阮-release.apk)（也在 [Release v1.0](https://github.com/yuanshen1834-design/zhongruan/releases/download/v1.0/zhongruan-v1.0-release.apk)） | 已签名，Android 7.0+（API 24） |
+| Windows x64 | [zhongruan-v1.0-win-x64.exe](https://github.com/yuanshen1834-design/zhongruan/releases/download/v1.0/zhongruan-v1.0-win-x64.exe) | 便携版，双击即用，无需安装（74 MB） |
+
+桌面版是 Electron 打包的单文件 exe，首次启动会自解压到临时目录；体积较大，故放在 Release 而非仓库内。
+
 ## 功能
 
 | 功能 | 说明 |
